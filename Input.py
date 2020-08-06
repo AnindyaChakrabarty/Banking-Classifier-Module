@@ -70,5 +70,4 @@ class Report(object):
         self.report_=self.report_.append(rSeries,ignore_index=True)
 
 
-import pandas as pd 
-dat=pd.DataFrame(columns=["Algorithm","Accuracy", "Precision","Recall","AUC"])
+
