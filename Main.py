@@ -3,7 +3,7 @@
 # Author : Anindya Chakrabarty 
 
 
-from Classifier import MachineLearning, FeatureEngineering, ExploratoryDataAnalysis, Utility
+from Classifier import Classifier, FeatureEngineering, ExploratoryDataAnalysis, Utility
 from Input import Input ,MongoDB, Report
 
 
@@ -16,8 +16,8 @@ class App:
                
 
     def runClassifier(self):
-        self.Classifier=MachineLearning(self.input_)
-        self.Classifier.runModel()
+        self.Classifier=Classifier(self.input_)
+        self.Classifier.compareModel()
         self.input_.writeMongoData(app.Classifier.report_.report_,"ModelComparisonReport")
 
 

@@ -409,7 +409,7 @@ class FeatureEngineering:
         self.processedData_.to_excel(self.featureEngineering_Dir_+"Missing Outlier Treated.xlsx")
         self.processedData_.to_excel(self.FEwriter_, sheet_name='Missing Outlier Treated')
           
-class MachineLearning:
+class Classifier:
 
     def __init__(self,input):
         import pandas as pd
@@ -443,10 +443,31 @@ class MachineLearning:
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
         return self.getResult('Naive Bayes Classifier')
+    
+    def tuneNaiveBayesClassifier(self):
+        import numpy as np
+        from sklearn.naive_bayes import MultinomialNB
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        print("**************Tuning Naive Bayes Classifier*********************")
+        grid_params = {'alpha' : [1,2,3]}
+        self.classifier_ = MultinomialNB()
+        grid_object = GridSearchCV(estimator =self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_,self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        return self.getResult('Tuned Naive Bayes Classifier')
         
         
     def RandomForestClassifier(self):
-       
         from sklearn.ensemble import RandomForestClassifier
         print("\n", 'Random Forest Classifier')
         self.classifier_ = RandomForestClassifier(n_estimators=500, max_depth=10, random_state=21)
@@ -454,19 +475,61 @@ class MachineLearning:
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
         return self.getResult('Random Forest Classifier')
+    
+    def tuneRandomForestClassifier(self):
+        import numpy as np
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        from sklearn.ensemble import RandomForestClassifier
+        print("**************Tuning Random Forest Classifier*********************")
+        grid_params = {'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
+        self.classifier_ = RandomForestClassifier()
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        return self.getResult('Tuned Random Forest Classifier')
         
     def XGBClassifier(self):
         from xgboost import XGBClassifier
-        
         print("\n", 'XG Boost Classifier')
         self.classifier_=XGBClassifier(n_estimators=100, max_depth=5,min_child_weight=1, random_state=21, learning_rate=1.0)
         self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
         return self.getResult('XG Boost Classifier')
+    
+    def tuneXGBClassifier(self):
+        import numpy as np
+        from xgboost import XGBClassifier
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        print("**************Tuning XG Boost Classifier*********************")
+        grid_params = {'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05],'max_depth':[2,3,6],'min_child_weight':[1,2]}
+        self.classifier_=XGBClassifier()
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        return self.getResult('Tuned XG Boost Classifier')
        
     def AdaBoostClassifier(self):
-        
         from sklearn.ensemble import  AdaBoostClassifier
         print("\n", 'AdaBoost Classifier')
         self.classifier_ = AdaBoostClassifier(n_estimators=200,random_state=21)
@@ -474,19 +537,61 @@ class MachineLearning:
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
         return self.getResult('AdaBoost Classifier')
+
+    def tuneAdaBoostClassifier(self):
+        import numpy as np
+        from sklearn.ensemble import  AdaBoostClassifier
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        print("**************Tuning Ada Boost Classifier*********************")
+        grid_params = {'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05]}
+        self.classifier_ = AdaBoostClassifier()
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        return self.getResult('Tuned AdaBoost Classifier')
         
     def GradientBoostingClassifier(self):
-       
         from sklearn.ensemble import  GradientBoostingClassifier
-        print("\n", 'Grdient Boosting Classifier')
+        print("\n", 'Gradient Boosting Classifier')
         self.classifier_ = GradientBoostingClassifier(n_estimators=100, max_depth=5, random_state=21, learning_rate=1.0)
         self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-        return self.getResult('Grdient Boosting Classifier')
+        return self.getResult('Gradient Boosting Classifier')
+
+    def tuneGradientBoostingClassifier(self):
+        import numpy as np
+        from sklearn.ensemble import  GradientBoostingClassifier
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        print("**************Tuning Grdient Boosting Classifier*********************")
+        grid_params = {'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05],'max_depth':[2,3,6]}
+        self.classifier_ = GradientBoostingClassifier()
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        return self.getResult('Tuned Gradient Boosting Classifier')
         
     def LinearSupportVectorMachine(self):
-        
         from sklearn.svm import SVC
         self.FE_.scaleVariable()
         print("\n", 'Linear Support Vector Machine')
@@ -497,7 +602,6 @@ class MachineLearning:
         return self.getResult('Linear Support Vector Machine')
        
     def KernelSupportVectorMachine(self):
-        
         from sklearn.svm import SVC
         self.FE_.scaleVariable()
         print("\n", 'Kernel Support Vector Machine')
@@ -506,10 +610,35 @@ class MachineLearning:
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
         return self.getResult('Kernel Support Vector Machine')
+    
+    def tuneKernelSupportVectorMachine(self):
+        import numpy as np
+        from sklearn.svm import SVC
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        self.FE_.scaleVariable()
+        print("**************Tuning Kernel Support Vector Machine*********************")
+        grid_params = [{'kernel': ['rbf'], 'gamma': [1e-2]},
+                        {'kernel': ['sigmoid'], 'gamma': [1e-2]},
+                         {'kernel': ['linear']}]
+      
+        self.classifier_=SVC(probability=True)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        return self.getResult('Tuned Support Vector Machine')
        
            
     def runModel(self):
-        
         self.FE_.EDA_.logger_.debug("Running Naive Bayes Classifier ")
         self.FE_.EDA_.util_.stopwatchStart()
         lst=self.NaiveBayesClassifier()
@@ -552,7 +681,47 @@ class MachineLearning:
         self.input_.writeMongoData(self.report_.report_,"ModelComparisonReport")
         self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
     
-     
+    def compareModel(self):
+        self.FE_.EDA_.logger_.debug("Tuning Naive Bayes Classifier ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneNaiveBayesClassifier()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
+        self.FE_.EDA_.logger_.debug("Tuning Random Forest Classifier ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneRandomForestClassifier()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
+        self.FE_.EDA_.logger_.debug("Tuning AdaBoost Classifier ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneAdaBoostClassifier()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
+        self.FE_.EDA_.logger_.debug("Tuning Gradient Boosting Classifier ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneGradientBoostingClassifier()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
+        self.FE_.EDA_.logger_.debug("Tuning XGBClassifier ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneXGBClassifier()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
+        self.FE_.EDA_.logger_.debug("Tuning  Support Vector Machine ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneKernelSupportVectorMachine()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
+        self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
+        print(self.report_.report_)
+        self.input_.writeMongoData(self.report_.report_,"TunedModelComparisonReport")
+        self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
     
     def getResult(self,algoName):
         from sklearn.metrics import roc_curve, auc, classification_report, confusion_matrix, precision_score, recall_score,  accuracy_score, precision_recall_curve
