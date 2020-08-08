@@ -416,7 +416,7 @@ class Classifier:
         import os
         import numpy as np
         pd.set_option('display.max_columns', None)
-        self.report_=Report()
+        
         self.input_=input
         self.FE_=FeatureEngineering(input)
         self.FE_.EDA_.logger_.debug("Starting Feature Engineering")
@@ -445,6 +445,7 @@ class Classifier:
         return self.getResult('Naive Bayes Classifier')
     
     def tuneNaiveBayesClassifier(self):
+        
         import numpy as np
         from sklearn.naive_bayes import MultinomialNB
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
@@ -464,19 +465,23 @@ class Classifier:
         results = np.round(results,2)
         print("Cross Validation Accuracy : ", round(results.mean(), 2))
         print("Cross Validation Accuracy in every fold : ", results)
+        
         return self.getResult('Tuned Naive Bayes Classifier')
         
         
     def RandomForestClassifier(self):
+       
         from sklearn.ensemble import RandomForestClassifier
         print("\n", 'Random Forest Classifier')
         self.classifier_ = RandomForestClassifier(n_estimators=500, max_depth=10, random_state=21)
         self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
+       
         return self.getResult('Random Forest Classifier')
     
     def tuneRandomForestClassifier(self):
+        
         import numpy as np
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         from sklearn.ensemble import RandomForestClassifier
@@ -496,18 +501,22 @@ class Classifier:
         results = np.round(results,2)
         print("Cross Validation Accuracy : ", round(results.mean(), 2))
         print("Cross Validation Accuracy in every fold : ", results)
+        
         return self.getResult('Tuned Random Forest Classifier')
         
     def XGBClassifier(self):
+        
         from xgboost import XGBClassifier
         print("\n", 'XG Boost Classifier')
         self.classifier_=XGBClassifier(n_estimators=100, max_depth=5,min_child_weight=1, random_state=21, learning_rate=1.0)
         self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
+       
         return self.getResult('XG Boost Classifier')
     
     def tuneXGBClassifier(self):
+        
         import numpy as np
         from xgboost import XGBClassifier
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
@@ -527,18 +536,22 @@ class Classifier:
         results = np.round(results,2)
         print("Cross Validation Accuracy : ", round(results.mean(), 2))
         print("Cross Validation Accuracy in every fold : ", results)
+        
         return self.getResult('Tuned XG Boost Classifier')
        
     def AdaBoostClassifier(self):
+        
         from sklearn.ensemble import  AdaBoostClassifier
         print("\n", 'AdaBoost Classifier')
         self.classifier_ = AdaBoostClassifier(n_estimators=200,random_state=21)
         self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
+        
         return self.getResult('AdaBoost Classifier')
 
     def tuneAdaBoostClassifier(self):
+        
         import numpy as np
         from sklearn.ensemble import  AdaBoostClassifier
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
@@ -558,18 +571,22 @@ class Classifier:
         results = np.round(results,2)
         print("Cross Validation Accuracy : ", round(results.mean(), 2))
         print("Cross Validation Accuracy in every fold : ", results)
+       
         return self.getResult('Tuned AdaBoost Classifier')
         
     def GradientBoostingClassifier(self):
+        
         from sklearn.ensemble import  GradientBoostingClassifier
         print("\n", 'Gradient Boosting Classifier')
         self.classifier_ = GradientBoostingClassifier(n_estimators=100, max_depth=5, random_state=21, learning_rate=1.0)
         self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
+       
         return self.getResult('Gradient Boosting Classifier')
 
     def tuneGradientBoostingClassifier(self):
+       
         import numpy as np
         from sklearn.ensemble import  GradientBoostingClassifier
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
@@ -589,6 +606,7 @@ class Classifier:
         results = np.round(results,2)
         print("Cross Validation Accuracy : ", round(results.mean(), 2))
         print("Cross Validation Accuracy in every fold : ", results)
+        
         return self.getResult('Tuned Gradient Boosting Classifier')
         
     def LinearSupportVectorMachine(self):
@@ -602,6 +620,7 @@ class Classifier:
         return self.getResult('Linear Support Vector Machine')
        
     def KernelSupportVectorMachine(self):
+        
         from sklearn.svm import SVC
         self.FE_.scaleVariable()
         print("\n", 'Kernel Support Vector Machine')
@@ -609,9 +628,11 @@ class Classifier:
         self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
         self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
         self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
+        
         return self.getResult('Kernel Support Vector Machine')
     
     def tuneKernelSupportVectorMachine(self):
+        
         import numpy as np
         from sklearn.svm import SVC
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
@@ -635,10 +656,12 @@ class Classifier:
         results = np.round(results,2)
         print("Cross Validation Accuracy : ", round(results.mean(), 2))
         print("Cross Validation Accuracy in every fold : ", results)
+        
         return self.getResult('Tuned Support Vector Machine')
        
            
     def runModel(self):
+        self.report_=Report()
         self.FE_.EDA_.logger_.debug("Running Naive Bayes Classifier ")
         self.FE_.EDA_.util_.stopwatchStart()
         lst=self.NaiveBayesClassifier()
@@ -682,6 +705,7 @@ class Classifier:
         self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
     
     def compareModel(self):
+        self.report_=Report()
         self.FE_.EDA_.logger_.debug("Tuning Naive Bayes Classifier ")
         self.FE_.EDA_.util_.stopwatchStart()
         lst=self.tuneNaiveBayesClassifier()
@@ -721,6 +745,29 @@ class Classifier:
         self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
         print(self.report_.report_)
         self.input_.writeMongoData(self.report_.report_,"TunedModelComparisonReport")
+        self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
+
+    def compareModel1(self):
+        self.algoCall_={"Tuning Naive Bayes Classifier ":self.tuneNaiveBayesClassifier(),
+                        "Tuning Random Forest Classifier":self.tuneRandomForestClassifier(),
+                        "Tuning AdaBoost Classifier":self.tuneAdaBoostClassifier(),
+                        "Tuning Gradient Boosting Classifier":self.tuneGradientBoostingClassifier(),
+                        "Tuning XGBClassifier":self.tuneXGBClassifier(),
+                        "Tuning Support Vector Machine":self.tuneKernelSupportVectorMachine()}
+        self.report_=Report()               
+        for key in self.algoCall_:
+             print("Start Stopwatch")
+             self.FE_.EDA_.util_.stopwatchStart()
+             print("Stopwatch Started ")
+             self.report_.insertResult(self.algoCall_[key])
+             print("Stop Stopwatch")
+             self.FE_.EDA_.util_.stopwatchStop()
+             print("Stopwatch Stopped ")
+             self.FE_.EDA_.util_.showTime()
+             print("Time Displayed ")
+             
+        self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
+        print(self.report_.report_)
         self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
     
     def getResult(self,algoName):
