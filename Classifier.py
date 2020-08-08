@@ -390,12 +390,19 @@ class FeatureEngineering:
         from imblearn.over_sampling import RandomOverSampler
         from collections import Counter
         os=RandomOverSampler(ratio)
-        self.X_train_, self.Y_train_ =os.fit_sample(self.X_train_, self.Y_train_)
+        self.X_train_, self.Y_train_ =os.fit_resample(self.X_train_, self.Y_train_)
         print('Over Sampled  Training Dataset Shape {}'.format(Counter(self.Y_train_)))
+    def SMOTE(self,k):
+        from imblearn.over_sampling import SMOTE
+        from collections import Counter
+        smote=SMOTE(sampling_strategy='auto', k_neighbors=k, random_state=100)
+        self.X_train_, self.Y_train_ =smote.fit_resample(self.X_train_, self.Y_train_)
+        print('SMOTE  Training Dataset Shape {}'.format(Counter(self.Y_train_)))
 
     def handlingImbalanceData(self):
         if (self.EDA_.isImbalence(0.5)):
-            self.overSampling(0.9)
+            #self.overSampling(1)
+            self.SMOTE(1)
         else:
             print("Data set is balanced and hence no changes made")
          
