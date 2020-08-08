@@ -73,6 +73,14 @@ class ExploratoryDataAnalysis:
         Header.remove('RowNumber')
         Header.remove('CustomerId') 
         self.data_=self.dataset_[Header]
+    def isImbalence(self,threshold):
+        imbl=self.data_[self.dependentVariableName_].value_counts()
+        if (imbl[1]/imbl[0]<threshold or imbl[0]/imbl[1]<threshold):
+            print(f'We have imbalence dataset with count of 1 in Total Data : {imbl[1]} and count of 0 in Total Data : {imbl[0]}')
+        else:
+            print(f'We do not have imbalence dataset with count of 1 in Total Data : {imbl[1]} and count of 0 in Total Data : {imbl[0]}')
+        return (imbl[1]/imbl[0]<threshold or imbl[0]/imbl[1]<threshold)
+        
     def getMissingValues(self):
         import pandas as pd
         import os
@@ -369,14 +377,29 @@ class FeatureEngineering:
         #self.targetEncoding(self.EDA_.catagoricalFeatures_,"mean")
         self.encodedFinalData_.to_excel(self.featureEngineering_Dir_+"Missing Value Treated and Encoded Data.xlsx")
         self.encodedFinalData_.to_excel(self.FEwriter_, sheet_name='Encoded Data')
-    
+   
     def splitData(self):
         from sklearn.model_selection import  train_test_split
+        from collections import Counter
         Y = self.encodedFinalData_[self.EDA_.dependentVariableName_]
         X=self.encodedFinalData_.drop(self.EDA_.dependentVariableName_,axis=1)
         self.X_train_, self.X_test_, self.Y_train_, self.Y_test_ = train_test_split(X, Y, train_size = 0.85, random_state = 21)
-        print("Train Data Dimensions : ", self.X_train_.shape)
-        print("Test Data Dimensions : ", self.X_test_.shape)
+        print('Original  Training Dataset Shape {}'.format(Counter(self.Y_train_)))
+        print('Original  Testing Dataset Shape {}'.format(Counter(self.Y_test_)))
+    def overSampling(self,ratio):
+        from imblearn.over_sampling import RandomOverSampler
+        from collections import Counter
+        os=RandomOverSampler(ratio)
+        self.X_train_, self.Y_train_ =os.fit_sample(self.X_train_, self.Y_train_)
+        print('Over Sampled  Training Dataset Shape {}'.format(Counter(self.Y_train_)))
+
+    def handlingImbalanceData(self):
+        if (self.EDA_.isImbalence(0.5)):
+            self.overSampling(0.9)
+        else:
+            print("Data set is balanced and hence no changes made")
+         
+        
     def scaleVariable(self):
         from sklearn.preprocessing import MinMaxScaler
         sc=MinMaxScaler()
@@ -427,6 +450,8 @@ class Classifier:
         self.FE_.encodeCatagoricalData()
         self.FE_.EDA_.logger_.debug("Spliting Data into Training and Testing ")
         self.FE_.splitData()
+        self.FE_.EDA_.logger_.debug("Handling Imbalance Dataset ")
+        self.FE_.handlingImbalanceData()
         self.FE_.EDA_.util_.stopwatchStop()
         self.FE_.EDA_.util_.showTime()
         self.util_=Utility()

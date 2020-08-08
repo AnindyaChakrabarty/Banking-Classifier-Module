@@ -5,29 +5,19 @@
 
 from Classifier import Classifier, FeatureEngineering, ExploratoryDataAnalysis, Utility
 from Input import Input ,MongoDB, Report
+from Factory import App
 
 
 
-class App:
-
-    def __init__(self,input):
-        self.input_=input
-        
-               
-
-    def runClassifier(self):
-        self.Classifier=Classifier(self.input_)
-        self.Classifier.compareModel()
-        self.input_.writeMongoData(app.Classifier.report_.report_,"ModelComparisonReport")
+inp=Input("BankChurnData","RawData","Exited")
+app=App(inp)                          
+app.runClassifier()
 
 
 
 
-if __name__=='__main__':
     
-    inp=Input("BankChurnData","RawData","Exited")
-    app=App(inp)                          
-    app.runClassifier()
+    
 
 
 
