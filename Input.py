@@ -63,13 +63,18 @@ class Report(object):
     def __init__(self):
         import pandas as pd
         self.report_ =pd.DataFrame(columns=["Algorithm","Accuracy", "Precision","Recall","AUC"])
+        self.predictionReport_ =pd.DataFrame(columns=["Algorithm","Prediction","Probability"])
         
     def insertResult(self,list):
         import pandas as pd
         rSeries=pd.Series(list,index=self.report_.columns)
         self.report_=self.report_.append(rSeries,ignore_index=True)
+    def insertPredictionResults(self,list):
+        import pandas as pd
+        rSeries=pd.Series(list,index=self.predictionReport_.columns)
+        self.predictionReport_=self.predictionReport_.append(rSeries,ignore_index=True)
 
 
 
 
-
+db=MongoDB("BankChurnData","newData")

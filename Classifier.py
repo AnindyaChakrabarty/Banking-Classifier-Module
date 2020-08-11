@@ -69,10 +69,10 @@ class ExploratoryDataAnalysis:
         Header.remove(self.dependentVariableName_)
         self.X_=self.dataset_[Header]
     def getData(self):
-        Header=list(self.dataset_.columns)
-        Header.remove('RowNumber')
-        Header.remove('CustomerId') 
-        self.data_=self.dataset_[Header]
+        self.Header_=list(self.dataset_.columns)
+        self.Header_.remove('RowNumber')
+        self.Header_.remove('CustomerId') 
+        self.data_=self.dataset_[self.Header_]
     def isImbalence(self,threshold):
         imbl=self.data_[self.dependentVariableName_].value_counts()
         if (imbl[1]/imbl[0]<threshold or imbl[0]/imbl[1]<threshold):
@@ -448,6 +448,7 @@ class Classifier:
         pd.set_option('display.max_columns', None)
         
         self.input_=input
+        self.bestModels_={}
         self.FE_=FeatureEngineering(input)
         self.FE_.EDA_.logger_.debug("Starting Feature Engineering")
         self.FE_.EDA_.util_.stopwatchStart()
@@ -489,6 +490,7 @@ class Classifier:
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
         print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'Naive Bayes Classifier':grid_object.best_estimator_})
         self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
         self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
         kfold = KFold(n_splits=10, random_state=25, shuffle=True)
@@ -525,6 +527,7 @@ class Classifier:
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
         print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'Random Forest Classifier':grid_object.best_estimator_})
         self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
         self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
         kfold = KFold(n_splits=10, random_state=25, shuffle=True)
@@ -560,6 +563,7 @@ class Classifier:
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
         print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'XG Boost Classifier':grid_object.best_estimator_})
         self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
         self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
         kfold = KFold(n_splits=10, random_state=25, shuffle=True)
@@ -595,6 +599,7 @@ class Classifier:
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
         print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'Ada Boost Classifier':grid_object.best_estimator_})
         self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
         self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
         kfold = KFold(n_splits=10, random_state=25, shuffle=True)
@@ -630,6 +635,7 @@ class Classifier:
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
         print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'Grdient Boosting Classifier':grid_object.best_estimator_})
         self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
         self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
         kfold = KFold(n_splits=10, random_state=25, shuffle=True)
@@ -680,6 +686,7 @@ class Classifier:
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
         print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'Kernel Support Vector Machine':grid_object.best_estimator_})
         self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
         self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
         kfold = KFold(n_splits=10, random_state=25, shuffle=True)
@@ -842,8 +849,25 @@ class Classifier:
         #plt.savefig('Log_ROC')
         #plt.show()
         return report
-    
 
+    def predict(self,newData):
+        import pandas as pd
+        self.predictionReport_=Report()
+        self.newInput_=Input(self.input_.databaseName_,newData,self.input_.dependentVariableName_)
+        self.newDataSet_=self.newInput_.readMongoData()
+        self.FE_.EDA_.Header_.remove(self.input_.dependentVariableName_)     
+        self.newData_=self.newDataSet_[self.FE_.EDA_.Header_].copy()
+        self.newData_ = pd.get_dummies(self.newData_,drop_first=False)
+        self.newData_=self.newData_.reindex(columns=list(self.FE_.X_train_.columns),fill_value=0)
+        #self.prediction_=self.bestModels_.copy()
+        for key in self.bestModels_:
+            self.predictionReport_.insertPredictionResults([key,self.bestModels_[key].predict(self.newData_),self.bestModels_[key].predict_proba(self.newData_)])              
+        print(self.predictionReport_.predictionReport_)
+
+        
+
+    
+  
 
 
 

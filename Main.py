@@ -12,6 +12,7 @@ from Factory import App
 inp=Input("BankChurnData","RawData","Exited")
 app=App(inp)                          
 app.runClassifier()
+app.predict("newData")
 
 
 
