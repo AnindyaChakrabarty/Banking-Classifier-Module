@@ -14,3 +14,5 @@ class App:
         self.input_.writeMongoData(self.Classifier_.report_.report_,"ModelComparisonReport")
     def predict(self,newData):
         self.Classifier_.predict(newData)
+        self.input_.writeMongoData(self.Classifier_.predictionReport_.predictionReport_,"ModelPredictionReport")
+
