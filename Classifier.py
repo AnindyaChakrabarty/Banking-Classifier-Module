@@ -852,6 +852,7 @@ class Classifier:
 
     def predict(self,newData):
         import pandas as pd
+        import numpy as np
         self.predictionReport_=Report()
         self.newInput_=Input(self.input_.databaseName_,newData,self.input_.dependentVariableName_)
         self.newDataSet_=self.newInput_.readMongoData()
@@ -861,9 +862,9 @@ class Classifier:
         self.newData_=self.newData_.reindex(columns=list(self.FE_.X_train_.columns),fill_value=0)
         #self.prediction_=self.bestModels_.copy()
         for key in self.bestModels_:
-            self.predictionReport_.insertPredictionResults([key,self.bestModels_[key].predict(self.newData_),self.bestModels_[key].predict_proba(self.newData_)])              
+            self.predictionReport_.insertPredictionResults([key,self.bestModels_[key].predict(self.newData_),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][0],2)*100),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][1],2)*100)])              
         print(self.predictionReport_.predictionReport_)
-
+   
         
 
     

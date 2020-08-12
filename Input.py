@@ -63,7 +63,7 @@ class Report(object):
     def __init__(self):
         import pandas as pd
         self.report_ =pd.DataFrame(columns=["Algorithm","Accuracy", "Precision","Recall","AUC"])
-        self.predictionReport_ =pd.DataFrame(columns=["Algorithm","Prediction","Probability"])
+        self.predictionReport_ =pd.DataFrame(columns=["   Algorithm   ","Prediction   ","   Probability of 0    ","    Probability of 1   "])
         
     def insertResult(self,list):
         import pandas as pd
