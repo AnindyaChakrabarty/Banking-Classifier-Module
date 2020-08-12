@@ -8,7 +8,7 @@ class App:
         self.input_=input
         
       
-    def runClassifier(self):
+    def fit(self):
         self.Classifier_=Classifier(self.input_)
         self.Classifier_.compareModel()
         self.input_.writeMongoData(self.Classifier_.report_.report_,"ModelComparisonReport")
