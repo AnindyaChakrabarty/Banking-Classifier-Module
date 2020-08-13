@@ -473,6 +473,7 @@ class Classifier:
         self.Model_Dir_= self.util_.makeDir(self.parentDirectory_,"Machine Learning Models")
     
     def getHyperParameters(self):
+         
          self.grid_params_NaiveBayesClassifier_ = {'alpha' : [1,2,3]}
          self.grid_params_RandomForestClassifier_ = {'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
          self.grid_params_XGBClassifier_={'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05],'max_depth':[2,3,6],'min_child_weight':[1,2]}
@@ -481,7 +482,7 @@ class Classifier:
          self.grid_params_KernelSupportVectorMachine_=[{'kernel': ['rbf','sigmoid','linear'], 'gamma': [1e-2]}]
          self.grid_params_LogisticRegression_= {'C' : [0.0001, 0.01, 0.05, 0.2, 1],'penalty' : ['l1', 'l2']} 
          self.grid_params_ExtraTreesClassifier_={'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
-         
+            
     def tuneNaiveBayesClassifier(self):
         
         import numpy as np
