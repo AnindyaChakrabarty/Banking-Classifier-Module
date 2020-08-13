@@ -454,6 +454,7 @@ class FeatureEngineering:
         self.handlingImbalanceData()
         self.EDA_.util_.stopwatchStop()
         self.EDA_.util_.showTime()
+
         
           
 class Classifier:
@@ -471,16 +472,24 @@ class Classifier:
         self.parentDirectory_ = os.path.dirname(os.getcwd())
         self.Model_Dir_= self.util_.makeDir(self.parentDirectory_,"Machine Learning Models")
     
-            
+    def getHyperParameters(self):
+         self.grid_params_NaiveBayesClassifier_ = {'alpha' : [1,2,3]}
+         self.grid_params_RandomForestClassifier_ = {'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
+         self.grid_params_XGBClassifier_={'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05],'max_depth':[2,3,6],'min_child_weight':[1,2]}
+         self.grid_params_AdaBoostClassifier_={'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05]}
+         self.grid_params_GradientBoostingClassifier_={'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05],'max_depth':[2,3,6]}
+         self.grid_params_KernelSupportVectorMachine_=[{'kernel': ['rbf','sigmoid','linear'], 'gamma': [1e-2]}]
+         self.grid_params_LogisticRegression_= {'C' : [0.0001, 0.01, 0.05, 0.2, 1],'penalty' : ['l1', 'l2']} 
+         self.grid_params_ExtraTreesClassifier_={'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
+         
     def tuneNaiveBayesClassifier(self):
         
         import numpy as np
         from sklearn.naive_bayes import MultinomialNB
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         print("**************Tuning Naive Bayes Classifier*********************")
-        grid_params = {'alpha' : [1,2,3]}
         self.classifier_ = MultinomialNB()
-        grid_object = GridSearchCV(estimator =self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator =self.classifier_, param_grid = self.grid_params_NaiveBayesClassifier_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_,self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -503,9 +512,9 @@ class Classifier:
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         from sklearn.ensemble import RandomForestClassifier
         print("**************Tuning Random Forest Classifier*********************")
-        grid_params = {'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
+        
         self.classifier_ = RandomForestClassifier()
-        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = self.grid_params_RandomForestClassifier_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -528,9 +537,9 @@ class Classifier:
         from xgboost import XGBClassifier
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         print("**************Tuning XG Boost Classifier*********************")
-        grid_params = {'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05],'max_depth':[2,3,6],'min_child_weight':[1,2]}
+        
         self.classifier_=XGBClassifier()
-        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = self.grid_params_XGBClassifier_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -553,9 +562,9 @@ class Classifier:
         from sklearn.ensemble import  AdaBoostClassifier
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         print("**************Tuning Ada Boost Classifier*********************")
-        grid_params = {'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05]}
+       
         self.classifier_ = AdaBoostClassifier()
-        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = self.grid_params_AdaBoostClassifier_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -578,9 +587,9 @@ class Classifier:
         from sklearn.ensemble import  GradientBoostingClassifier
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         print("**************Tuning Grdient Boosting Classifier*********************")
-        grid_params = {'n_estimators' : [100,200,300],'learning_rate' : [1.0, 0.1, 0.05],'max_depth':[2,3,6]}
+       
         self.classifier_ = GradientBoostingClassifier()
-        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = self.grid_params_GradientBoostingClassifier_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -604,12 +613,9 @@ class Classifier:
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         self.FE_.scaleVariable()
         print("**************Tuning Kernel Support Vector Machine*********************")
-        grid_params = [{'kernel': ['rbf'], 'gamma': [1e-2]},
-                        {'kernel': ['sigmoid'], 'gamma': [1e-2]},
-                         {'kernel': ['linear']}]
-      
+           
         self.classifier_=SVC(probability=True)
-        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = self.grid_params_KernelSupportVectorMachine_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -633,9 +639,9 @@ class Classifier:
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         self.FE_.scaleVariable()
         print("**************Tuning Logistic Regression*********************")
-        grid_params ={'C' : [0.0001, 0.01, 0.05, 0.2, 1],'penalty' : ['l1', 'l2']} 
+        
         self.classifier_=LogisticRegression()
-        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = self.grid_params_LogisticRegression_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -658,9 +664,9 @@ class Classifier:
         from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
         from sklearn.ensemble import ExtraTreesClassifier
         print("**************Tuning Extra Trees Classifier*********************")
-        grid_params = {'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
+        
         self.classifier_ = ExtraTreesClassifier()
-        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = self.grid_params_ExtraTreesClassifier_, scoring = 'accuracy', cv = 10, n_jobs = -1)
         grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
         print("Best Parameters : ", grid_object.best_params_)
         print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
@@ -679,6 +685,7 @@ class Classifier:
         
     def compareModel(self):
         self.report_=Report()
+        self.getHyperParameters()
         self.FE_.EDA_.logger_.debug("Tuning Logistic Regression ")
         self.FE_.EDA_.util_.stopwatchStart()
         lst=self.tuneLogisticRegression()
@@ -733,6 +740,7 @@ class Classifier:
         self.FE_.EDA_.logger_.debug("Ending Model Calibration ")
 
     def compareModel1(self):
+        self.getHyperParameters()
         self.algoCall_={"Tuning Naive Bayes Classifier ":self.tuneNaiveBayesClassifier(),
                         "Tuning Random Forest Classifier":self.tuneRandomForestClassifier(),
                         "Tuning AdaBoost Classifier":self.tuneAdaBoostClassifier(),
