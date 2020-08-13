@@ -51,9 +51,6 @@ class ExploratoryDataAnalysis:
         import logging
         self.util_=Utility()
         self.logger_=self.util_.SetLogger()
-        #self.dataFileName_=dataFileName
-        #self.dependentVariableName_=dependentVariableName
-        #self.dataset_= pd.read_csv(dataFileName)
         self.dataset_=input.readMongoData()
         self.dependentVariableName_=input.dependentVariableName_
         self.dataFileName_=input.collectionName_
@@ -261,6 +258,9 @@ class ExploratoryDataAnalysis:
 
     def run(self):
         import logging
+        self.logger_.debug("***********************************************************")
+        self.logger_.debug(" Anindya Chakrabarty Welcomes you to Classification Module ")
+        self.logger_.debug("***********************************************************")
         self.logger_.debug("Starting Exploratory Data Analysis")
         self.util_.stopwatchStart()
         self.getData()
@@ -324,7 +324,6 @@ class FeatureEngineering:
             randomSample=self.processedData_[feature].dropna().sample(self.processedData_[feature].isnull().sum(),random_state=0)
             randomSample.index=self.processedData_[self.processedData_[feature].isnull()].index
             self.processedData_.loc[self.processedData_[feature].isnull(),feature]=randomSample
-
 
         
     def replaceMissingValues(self):
@@ -438,6 +437,24 @@ class FeatureEngineering:
 
         self.processedData_.to_excel(self.featureEngineering_Dir_+"Missing Outlier Treated.xlsx")
         self.processedData_.to_excel(self.FEwriter_, sheet_name='Missing Outlier Treated')
+    
+    def run(self):
+        self.EDA_.logger_.debug(" ***************************************************************")
+        self.EDA_.logger_.debug(" Anindya Chakrabarty Welcomes you to Fearure Engineering Module ")
+        self.EDA_.logger_.debug(" ***************************************************************")
+        self.EDA_.logger_.debug("Starting Feature Engineering")
+        self.EDA_.util_.stopwatchStart()
+        self.EDA_.logger_.debug("Replacing Missing Values")
+        self.replaceMissingValues()
+        self.EDA_.logger_.debug("Encoding Catagorical Variables")
+        self.encodeCatagoricalData()
+        self.EDA_.logger_.debug("Spliting Data into Training and Testing ")
+        self.splitData()
+        self.EDA_.logger_.debug("Handling Imbalance Dataset ")
+        self.handlingImbalanceData()
+        self.EDA_.util_.stopwatchStop()
+        self.EDA_.util_.showTime()
+        
           
 class Classifier:
 
@@ -446,37 +463,15 @@ class Classifier:
         import os
         import numpy as np
         pd.set_option('display.max_columns', None)
-        
         self.input_=input
         self.bestModels_={}
         self.FE_=FeatureEngineering(input)
-        self.FE_.EDA_.logger_.debug("Starting Feature Engineering")
-        self.FE_.EDA_.util_.stopwatchStart()
-        self.FE_.EDA_.logger_.debug("Replacing Missing Values")
-        self.FE_.replaceMissingValues()
-        self.FE_.EDA_.logger_.debug("Encoding Catagorical Variables")
-        self.FE_.encodeCatagoricalData()
-        self.FE_.EDA_.logger_.debug("Spliting Data into Training and Testing ")
-        self.FE_.splitData()
-        self.FE_.EDA_.logger_.debug("Handling Imbalance Dataset ")
-        self.FE_.handlingImbalanceData()
-        self.FE_.EDA_.util_.stopwatchStop()
-        self.FE_.EDA_.util_.showTime()
+        self.FE_.run()
         self.util_=Utility()
         self.parentDirectory_ = os.path.dirname(os.getcwd())
         self.Model_Dir_= self.util_.makeDir(self.parentDirectory_,"Machine Learning Models")
     
-    
-    def NaiveBayesClassifier(self):
-        
-        from sklearn.naive_bayes import MultinomialNB
-        print("\n", 'Naive Bayes Classifier')
-        self.classifier_ = MultinomialNB(alpha = 1.0)
-        self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
-        self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
-        self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-        return self.getResult('Naive Bayes Classifier')
-    
+            
     def tuneNaiveBayesClassifier(self):
         
         import numpy as np
@@ -501,19 +496,7 @@ class Classifier:
         print("Cross Validation Accuracy in every fold : ", results)
         
         return self.getResult('Tuned Naive Bayes Classifier')
-        
-        
-    def RandomForestClassifier(self):
-       
-        from sklearn.ensemble import RandomForestClassifier
-        print("\n", 'Random Forest Classifier')
-        self.classifier_ = RandomForestClassifier(n_estimators=500, max_depth=10, random_state=21)
-        self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
-        self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
-        self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-       
-        return self.getResult('Random Forest Classifier')
-    
+   
     def tuneRandomForestClassifier(self):
         
         import numpy as np
@@ -539,17 +522,6 @@ class Classifier:
         
         return self.getResult('Tuned Random Forest Classifier')
         
-    def XGBClassifier(self):
-        
-        from xgboost import XGBClassifier
-        print("\n", 'XG Boost Classifier')
-        self.classifier_=XGBClassifier(n_estimators=100, max_depth=5,min_child_weight=1, random_state=21, learning_rate=1.0)
-        self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
-        self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
-        self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-       
-        return self.getResult('XG Boost Classifier')
-    
     def tuneXGBClassifier(self):
         
         import numpy as np
@@ -574,18 +546,7 @@ class Classifier:
         print("Cross Validation Accuracy in every fold : ", results)
         
         return self.getResult('Tuned XG Boost Classifier')
-       
-    def AdaBoostClassifier(self):
-        
-        from sklearn.ensemble import  AdaBoostClassifier
-        print("\n", 'AdaBoost Classifier')
-        self.classifier_ = AdaBoostClassifier(n_estimators=200,random_state=21)
-        self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
-        self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
-        self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-        
-        return self.getResult('AdaBoost Classifier')
-
+    
     def tuneAdaBoostClassifier(self):
         
         import numpy as np
@@ -610,18 +571,7 @@ class Classifier:
         print("Cross Validation Accuracy in every fold : ", results)
        
         return self.getResult('Tuned AdaBoost Classifier')
-        
-    def GradientBoostingClassifier(self):
-        
-        from sklearn.ensemble import  GradientBoostingClassifier
-        print("\n", 'Gradient Boosting Classifier')
-        self.classifier_ = GradientBoostingClassifier(n_estimators=100, max_depth=5, random_state=21, learning_rate=1.0)
-        self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
-        self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
-        self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-       
-        return self.getResult('Gradient Boosting Classifier')
-
+   
     def tuneGradientBoostingClassifier(self):
        
         import numpy as np
@@ -647,28 +597,6 @@ class Classifier:
         
         return self.getResult('Tuned Gradient Boosting Classifier')
         
-    def LinearSupportVectorMachine(self):
-        from sklearn.svm import SVC
-        self.FE_.scaleVariable()
-        print("\n", 'Linear Support Vector Machine')
-        self.classifier_=SVC(kernel="linear",C=1.5,probability=True)
-        self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
-        self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
-        self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-        return self.getResult('Linear Support Vector Machine')
-       
-    def KernelSupportVectorMachine(self):
-        
-        from sklearn.svm import SVC
-        self.FE_.scaleVariable()
-        print("\n", 'Kernel Support Vector Machine')
-        self.classifier_=SVC(kernel="rbf",C=1,gamma='scale',probability=True)
-        self.classifier_.fit(self.FE_.X_train_, self.FE_.Y_train_)
-        self.Y_pred_ = self.classifier_.predict(self.FE_.X_test_)
-        self.probs_ = self.classifier_.predict_proba(self.FE_.X_test_)
-        
-        return self.getResult('Kernel Support Vector Machine')
-    
     def tuneKernelSupportVectorMachine(self):
         
         import numpy as np
@@ -697,54 +625,72 @@ class Classifier:
         print("Cross Validation Accuracy in every fold : ", results)
         
         return self.getResult('Tuned Support Vector Machine')
-       
-           
-    def runModel(self):
-        self.report_=Report()
-        self.FE_.EDA_.logger_.debug("Running Naive Bayes Classifier ")
-        self.FE_.EDA_.util_.stopwatchStart()
-        lst=self.NaiveBayesClassifier()
-        self.report_.insertResult(lst)
-        self.FE_.EDA_.util_.stopwatchStop()
-        self.FE_.EDA_.util_.showTime()
-        self.FE_.EDA_.logger_.debug("Running Random Forest Classifier ")
-        self.FE_.EDA_.util_.stopwatchStart()
-        lst=self.RandomForestClassifier()
-        self.report_.insertResult(lst)
-        self.FE_.EDA_.util_.stopwatchStop()
-        self.FE_.EDA_.util_.showTime()
-        self.FE_.EDA_.logger_.debug("Running AdaBoost Classifier ")
-        self.FE_.EDA_.util_.stopwatchStart()
-        lst=self.AdaBoostClassifier()
-        self.report_.insertResult(lst)
-        self.FE_.EDA_.util_.stopwatchStop()
-        self.FE_.EDA_.util_.showTime()
-        self.FE_.EDA_.logger_.debug("Running Gradient Boosting Classifier ")
-        self.FE_.EDA_.util_.stopwatchStart()
-        lst=self.GradientBoostingClassifier()
-        self.report_.insertResult(lst)
-        self.FE_.EDA_.util_.stopwatchStop()
-        self.FE_.EDA_.util_.showTime()
-        self.FE_.EDA_.logger_.debug("Running XGBClassifier ")
-        self.FE_.EDA_.util_.stopwatchStart()
-        lst=self.XGBClassifier()
-        self.report_.insertResult(lst)
-        self.FE_.EDA_.util_.stopwatchStop()
-        self.FE_.EDA_.util_.showTime()
-        self.FE_.EDA_.logger_.debug("Running Kernel Support Vector Machine ")
-        self.FE_.EDA_.util_.stopwatchStart()
-        #self.LinearSupportVectorMachine()
-        lst=self.KernelSupportVectorMachine()
-        self.report_.insertResult(lst)
-        self.FE_.EDA_.util_.stopwatchStop()
-        self.FE_.EDA_.util_.showTime()
-        self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
-        print(self.report_.report_)
-        self.input_.writeMongoData(self.report_.report_,"ModelComparisonReport")
-        self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
     
+    def tuneLogisticRegression(self):
+        
+        import numpy as np
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        self.FE_.scaleVariable()
+        print("**************Tuning Logistic Regression*********************")
+        grid_params ={'C' : [0.0001, 0.01, 0.05, 0.2, 1],'penalty' : ['l1', 'l2']} 
+        self.classifier_=LogisticRegression()
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'Logistic Regression':grid_object.best_estimator_})
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        
+        return self.getResult('Tuned Logistic Regression')
+
+    def tuneExtraTreesClassifier(self):
+        
+        import numpy as np
+        from sklearn.model_selection import StratifiedKFold,KFold,GridSearchCV,cross_val_score
+        from sklearn.ensemble import ExtraTreesClassifier
+        print("**************Tuning Extra Trees Classifier*********************")
+        grid_params = {'n_estimators' : [100,200,300,400,500],'max_depth' : [10, 7, 5, 3],'criterion' : ['entropy', 'gini']}
+        self.classifier_ = ExtraTreesClassifier()
+        grid_object = GridSearchCV(estimator = self.classifier_, param_grid = grid_params, scoring = 'accuracy', cv = 10, n_jobs = -1)
+        grid_object.fit(self.FE_.X_train_, self.FE_.Y_train_)
+        print("Best Parameters : ", grid_object.best_params_)
+        print("Best_ROC-AUC : ", round(grid_object.best_score_ * 100, 2))
+        print("Best model : ", grid_object.best_estimator_)
+        self.bestModels_.update({'Extra Trees Classifier':grid_object.best_estimator_})
+        self.Y_pred_ = grid_object.best_estimator_.predict(self.FE_.X_test_)
+        self.probs_ = grid_object.best_estimator_.predict_proba(self.FE_.X_test_)
+        kfold = KFold(n_splits=10, random_state=25, shuffle=True)
+        results = cross_val_score(grid_object.best_estimator_, self.FE_.X_test_, self.FE_.Y_test_, cv=kfold)
+        results = results * 100
+        results = np.round(results,2)
+        print("Cross Validation Accuracy : ", round(results.mean(), 2))
+        print("Cross Validation Accuracy in every fold : ", results)
+        
+        return self.getResult('Tuned Extra Trees Classifier')      
+        
     def compareModel(self):
         self.report_=Report()
+        self.FE_.EDA_.logger_.debug("Tuning Logistic Regression ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneLogisticRegression()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
+        self.FE_.EDA_.logger_.debug("Tuning  Extra Trees Classifier ")
+        self.FE_.EDA_.util_.stopwatchStart()
+        lst=self.tuneExtraTreesClassifier()
+        self.report_.insertResult(lst)
+        self.FE_.EDA_.util_.stopwatchStop()
+        self.FE_.EDA_.util_.showTime()
         self.FE_.EDA_.logger_.debug("Tuning Naive Bayes Classifier ")
         self.FE_.EDA_.util_.stopwatchStart()
         lst=self.tuneNaiveBayesClassifier()
@@ -784,7 +730,7 @@ class Classifier:
         self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
         print(self.report_.report_)
         self.input_.writeMongoData(self.report_.report_,"TunedModelComparisonReport")
-        self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
+        self.FE_.EDA_.logger_.debug("Ending Model Calibration ")
 
     def compareModel1(self):
         self.algoCall_={"Tuning Naive Bayes Classifier ":self.tuneNaiveBayesClassifier(),
@@ -795,18 +741,8 @@ class Classifier:
                         "Tuning Support Vector Machine":self.tuneKernelSupportVectorMachine()}
         self.report_=Report()               
         for key in self.algoCall_:
-             print("Start Stopwatch")
-             self.FE_.EDA_.util_.stopwatchStart()
-             print("Stopwatch Started ")
-             self.report_.insertResult(self.algoCall_[key])
-             print("Stop Stopwatch")
-             self.FE_.EDA_.util_.stopwatchStop()
-             print("Stopwatch Stopped ")
-             self.FE_.EDA_.util_.showTime()
-             print("Time Displayed ")
-             
+            self.report_.insertResult(self.algoCall_[key])    
         self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
-        print(self.report_.report_)
         self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
     
     def getResult(self,algoName):
@@ -851,6 +787,7 @@ class Classifier:
         return report
 
     def predict(self,newData):
+        self.FE_.EDA_.logger_.debug("Starting Model prediction ")
         import pandas as pd
         import numpy as np
         self.predictionReport_=Report()
@@ -860,10 +797,13 @@ class Classifier:
         self.newData_=self.newDataSet_[self.FE_.EDA_.Header_].copy()
         self.newData_ = pd.get_dummies(self.newData_,drop_first=False)
         self.newData_=self.newData_.reindex(columns=list(self.FE_.X_train_.columns),fill_value=0)
-        #self.prediction_=self.bestModels_.copy()
+        
         for key in self.bestModels_:
             self.predictionReport_.insertPredictionResults([key,int(self.bestModels_[key].predict(self.newData_)),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][0],2)*100),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][1],2)*100)])              
         print(self.predictionReport_.predictionReport_)
+        self.FE_.EDA_.logger_.debug("***********************************************************")
+        self.FE_.EDA_.logger_.debug("Ending Model prediction. Good Bye")
+        self.FE_.EDA_.logger_.debug("***********************************************************")
    
         
 
