@@ -77,4 +77,4 @@ class Report(object):
 
 
 
-db=MongoDB("BankChurnData","newData")
+

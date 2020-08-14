@@ -13,6 +13,7 @@ inp=Input("BankChurnData","RawData","Exited")
 app=App(inp)                          
 app.fit()
 app.predict("newData")
+app.saveResults()
 
 
 

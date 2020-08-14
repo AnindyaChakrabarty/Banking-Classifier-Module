@@ -810,9 +810,8 @@ class Classifier:
         for key in self.bestModels_:
             self.predictionReport_.insertPredictionResults([key,int(self.bestModels_[key].predict(self.newData_)),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][0],2)*100),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][1],2)*100)])              
         print(self.predictionReport_.predictionReport_)
-        self.FE_.EDA_.logger_.debug("***********************************************************")
         self.FE_.EDA_.logger_.debug("Ending Model prediction. Good Bye")
-        self.FE_.EDA_.logger_.debug("***********************************************************")
+        
    
         
 
