@@ -7,13 +7,7 @@ from Input import Input ,MongoDB, Report
 
 class Utility:
     
-    
-    def makeDir(self,parentDirectory, dirName):
-        import os
-        new_dir = os.path.join(parentDirectory, dirName+'\\')
-        if not os.path.isdir(new_dir):
-            os.makedirs(new_dir)
-        return new_dir
+        
     def SetLogger(self):
         import logging
         logger = logging.getLogger("Classifier")
@@ -46,7 +40,7 @@ class ExploratoryDataAnalysis:
     
     def __init__(self,input):
         import pandas as pd
-        import os
+       
         import numpy as np
         import logging
         self.util_=Utility()
@@ -54,9 +48,7 @@ class ExploratoryDataAnalysis:
         self.dataset_=input.readMongoData()
         self.dependentVariableName_=input.dependentVariableName_
         self.dataFileName_=input.collectionName_
-        self.parentDirectory_ = os.path.dirname(os.getcwd())
-        self.exploratoryDataAnalysisDir_= self.util_.makeDir(self.parentDirectory_,"Exploratory Data Analysis")
-        self.writer_ = pd.ExcelWriter(self.exploratoryDataAnalysisDir_+'Exploratory Data Analysis.xlsx', engine='xlsxwriter')
+        
     
                 
     def getY(self):
@@ -80,50 +72,22 @@ class ExploratoryDataAnalysis:
         
     def getMissingValues(self):
         import pandas as pd
-        import os
-        import numpy as np 
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        
-        Missing_Features_Dir= self.util_.makeDir(self.exploratoryDataAnalysisDir_,"Missing Features")
-        Missing_Features_Plot_Dir= self.util_.makeDir(Missing_Features_Dir,"Missing Features Plot")
+        import numpy as np            
         data=self.data_.copy()
         self.features_With_NA_= [feature for feature in self.data_.columns if self.data_[feature].isnull().sum()>=1]
         self.missing_Continuous_Numerical_= [feature for feature in self.data_.columns if self.data_[feature].isnull().sum()>=1 and self.data_[feature].dtype!="O" and feature !="Id" and len(self.data_[feature].unique())>25]
         self.missing_Discrete_Numerical_= [feature for feature in self.data_.columns if self.data_[feature].isnull().sum()>=1 and self.data_[feature].dtype!="O" and feature !="Id" and len(self.data_[feature].unique())<=25]
         self.missing_Catagorical_= [feature for feature in self.data_.columns if self.data_[feature].isnull().sum()>=1 and self.data_[feature].dtype=="O"]
-
         self.missingList_= pd.DataFrame(columns=['Features','Total Missing Values','% Missing Values'])
         for feature in self.features_With_NA_:
             self.missingList_ = self.missingList_.append({'Features': feature,'Total Missing Values': np.round(self.data_[feature].isnull().sum(),0), '% Missing Values': np.round(self.data_[feature].isnull().mean(),4)*100}, ignore_index=True)
-            data[feature]=np.where(data[feature].isnull(),"NA","Value")
-            data.groupby(feature)[self.dependentVariableName_].median().plot.bar(color=['blue','red'])
-            plt.title(feature)
-            plt.savefig(Missing_Features_Plot_Dir + feature,dpi = 600)
-            plt.close()
         self.missingList_=self.missingList_.sort_values(by='Total Missing Values', ascending=False)
-        self.missingList_.to_excel(self.writer_, sheet_name='Summary of Missing values')
-        self.missingList_.to_excel(Missing_Features_Dir+"Summary of Missing values.xlsx")
-        sns.heatmap(self.dataset_.isnull(),yticklabels=False,cbar=False,cmap="viridis")
-        plt.savefig(Missing_Features_Dir + feature,dpi = 600)
         
-        plt.close()
 
     
     def analyzeData(self):
         import pandas as pd
-        import os
-        import numpy as np 
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        
-        Discrete_Numerical_Features_Dir= self.util_.makeDir(self.exploratoryDataAnalysisDir_,"Discrete Numerical Features")
-        Continous_Numerical_Features_Dir= self.util_.makeDir(self.exploratoryDataAnalysisDir_,"Continous Numerical Features")
-        Continous_Numerical_Features_Histogram_Dir= self.util_.makeDir(Continous_Numerical_Features_Dir,"Continous Numerical Features")
-        Continous_Numerical_Features_lognormal_Dir= self.util_.makeDir(self.exploratoryDataAnalysisDir_,"Continous Numerical lognormal Features")
-        Continous_Numerical_Features_Histogram_lognormal_Dir= self.util_.makeDir(self.exploratoryDataAnalysisDir_,"Continous Numerical lognormal Histograms")
-        Continous_Numerical_Features_Boxplot_lognormal_Dir= self.util_.makeDir(self.exploratoryDataAnalysisDir_,"Continous Numerical lognormal BoxPlot")
-        Categorical_Features_Dir= self.util_.makeDir(self.exploratoryDataAnalysisDir_,"Categorical Features")
+        import numpy as np   
         self.catagoryList_= pd.DataFrame(columns=['Catagories','Count','Features'])
         self.numericalFeatures_=[feature for feature in self.data_.columns if self.data_[feature].dtype!="O"]
         self.yearFeatures_=[feature for feature in self.data_.columns if "Yr" in feature or "yr" in feature or "Year" in feature or "year" in feature]
@@ -135,90 +99,8 @@ class ExploratoryDataAnalysis:
         self.catagoryList_=self.catagoryList_.append({'Catagories':"Discrete Numerical Features",'Count':len(self.discreteNumericalFeatures_),'Features':self.discreteNumericalFeatures_}, ignore_index=True)
         self.catagoryList_=self.catagoryList_.append({'Catagories':"Continous Numerical Features",'Count':len(self.continousNumericalFeatures_),'Features':self.continousNumericalFeatures_}, ignore_index=True)
         self.catagoryList_=self.catagoryList_.append({'Catagories':"Catagorical Features" ,'Count':len(self.catagoricalFeatures_),'Features':self.catagoricalFeatures_  }, ignore_index=True)
-        self.catagoryList_.to_excel(self.exploratoryDataAnalysisDir_+"Summary of Features.xlsx")
-        self.catagoryList_.to_excel(self.writer_, sheet_name='Summary of Feature Types')
         self.cardinalityList_= pd.DataFrame(columns=['Catagorical Features','Number of Categories'])
-    
-        for feature in self.discreteNumericalFeatures_:
-            data=self.data_.copy()
-            data.groupby(feature)[self.dependentVariableName_].median().plot.bar(color=['blue','red','green','yellow','cyan','pink','violet'])
-            plt.xlabel(feature)
-            plt.ylabel(self.dependentVariableName_)
-            plt.title(feature)
-            plt.savefig(Discrete_Numerical_Features_Dir + feature,dpi = 600)
-            plt.close()
-
-        for feature in self.catagoricalFeatures_:
-            self.cardinalityList_=self.cardinalityList_.append({'Catagorical Features': feature,'Number of Categories':len(self.data_[feature].unique())}, ignore_index=True)
-            data=self.data_.copy()
-            data.groupby(feature)[self.dependentVariableName_].median().plot.bar(color=['blue','red','green','yellow','cyan','pink','violet'])
-            plt.xlabel(feature)
-            plt.ylabel(self.dependentVariableName_)
-            plt.title(feature)
-            plt.savefig(Categorical_Features_Dir + feature,dpi = 600)
-            plt.close()
-        
-        for feature in self.continousNumericalFeatures_:
-            data=self.data_.copy()
-            plt.scatter(data[feature],data[self.dependentVariableName_])
-            plt.xlabel(feature)
-            plt.ylabel(self.dependentVariableName_)
-            plt.title(feature)
-            plt.savefig(Continous_Numerical_Features_Dir + feature,dpi = 600)
-            plt.close()
-
-        for feature in self.continousNumericalFeatures_:
-            data=self.data_.copy()
-            data[feature].hist(bins=30)
-            plt.xlabel(feature)
-            plt.ylabel("Count")
-            plt.title(feature)
-            plt.savefig(Continous_Numerical_Features_Histogram_Dir + feature,dpi = 600)
-            plt.close()
-
-        for feature in self.continousNumericalFeatures_:
-            data=self.data_.copy()
-            if 0 in data[feature].unique():
-                pass
-            else:
-                data[feature]=np.log(data[feature])
-            plt.scatter(data[feature],data[self.dependentVariableName_])
-            plt.xlabel(feature)
-            plt.ylabel(self.dependentVariableName_)
-            plt.title(feature)
-            plt.savefig(Continous_Numerical_Features_lognormal_Dir + feature,dpi = 600)
-            plt.close()
-
-        for feature in self.continousNumericalFeatures_:
-            data=self.data_.copy()
-            if 0 in data[feature].unique():
-                pass
-            else:
-                data[feature]=np.log(data[feature])
-            data[feature].hist(bins=30)
-            plt.xlabel(feature)
-            plt.ylabel("Count")
-            plt.title(feature)
-            plt.savefig(Continous_Numerical_Features_Histogram_lognormal_Dir + feature,dpi = 600)
-            plt.close()
-
-        for feature in self.continousNumericalFeatures_:
-            data=self.data_.copy()
-            if 0 in data[feature].unique():
-                pass
-            else:
-                data[feature]=np.log(data[feature])
-            data.boxplot(column=feature)
-            plt.xlabel(feature)
-            plt.ylabel("Data")
-            plt.title(feature)
-            plt.savefig(Continous_Numerical_Features_Boxplot_lognormal_Dir + feature,dpi = 600)
-            plt.close()
-    
-        self.cardinalityList_.to_excel(Categorical_Features_Dir+"Cardinality of Categorical Features.xlsx")
-        self.cardinalityList_.to_excel(self.writer_, sheet_name='Cardinality of Features')
-        
-        
+      
     def getOutliers_using_Z_Score(self,threshold):
         import pandas as pd
         import numpy as np
@@ -233,8 +115,7 @@ class ExploratoryDataAnalysis:
                     self.outlierTable_[feature][row]=1
                 else:
                     self.outlierTable_[feature][row]=0
-        self.outlierTable_.to_excel(self.exploratoryDataAnalysisDir_+"Outliers using Z Score.xlsx")       
-        self.outlierTable_.to_excel(self.writer_, sheet_name='Outliers using Z Score')
+        
         
 
     def getOutliers_using_IQR(self):
@@ -252,8 +133,7 @@ class ExploratoryDataAnalysis:
                     self.outlierTable_[feature][row]=1
                 else:
                     self.outlierTable_[feature][row]=0
-        self.outlierTable_.to_excel(self.exploratoryDataAnalysisDir_+"Outliers using IQR.xlsx")       
-        self.outlierTable_.to_excel(self.writer_, sheet_name='Outliers using IQR')
+        
         
 
     def run(self):
@@ -273,23 +153,18 @@ class ExploratoryDataAnalysis:
         self.logger_.debug("Ending Exploratory Data Analysis")
         self.util_.stopwatchStop()
         self.util_.showTime()
-        self.writer_.save()
+        
         
             
 
 class FeatureEngineering:
     def __init__(self,input):
         import pandas as pd
-        import os
         import numpy as np
-        
-        pd.set_option('display.max_columns', None)
         self.EDA_=ExploratoryDataAnalysis(input)
         self.EDA_.run()
         self.util_=Utility()
-        self.parentDirectory_ = os.path.dirname(os.getcwd())
-        self.featureEngineering_Dir_= self.util_.makeDir(self.parentDirectory_,"Feature Engineering")
-        self.FEwriter_ = pd.ExcelWriter(self.featureEngineering_Dir_+'Feature Engineering.xlsx', engine='xlsxwriter')
+       
 
     def replaceByMedian(self):
         for feature in self.EDA_.missing_Continuous_Numerical_:
@@ -346,9 +221,6 @@ class FeatureEngineering:
             print("There are {} number of missing values of Categorical Features".format(len(self.EDA_.missing_Catagorical_)))
             self.createNewCatagory()
     
-                
-        self.processedData_.to_excel(self.featureEngineering_Dir_+"Missing Value Treated Data.xlsx")
-        self.processedData_.to_excel(self.FEwriter_, sheet_name='Missing Value Treated')
         features_With_NA_= [feature for feature in self.processedData_.columns if self.processedData_[feature].isnull().sum()>=1] 
         print("Now Number of Features with Missing Values is : {}".format(len(features_With_NA_)))
 
@@ -373,9 +245,8 @@ class FeatureEngineering:
     def encodeCatagoricalData(self):
         import pandas as pd
         self.oneHotEncoding(self.EDA_.catagoricalFeatures_)
-        #self.targetEncoding(self.EDA_.catagoricalFeatures_,"mean")
-        self.encodedFinalData_.to_excel(self.featureEngineering_Dir_+"Missing Value Treated and Encoded Data.xlsx")
-        self.encodedFinalData_.to_excel(self.FEwriter_, sheet_name='Encoded Data')
+        
+       
    
     def splitData(self):
         from sklearn.model_selection import  train_test_split
@@ -415,12 +286,10 @@ class FeatureEngineering:
         self.X_train_[discreteFeatures]= sc.fit_transform(self.X_train_[discreteFeatures])
         self.X_test_[self.EDA_.continousNumericalFeatures_]= sc.fit_transform(self.X_test_[self.EDA_.continousNumericalFeatures_])
         self.X_test_[discreteFeatures]= sc.fit_transform(self.X_test_[discreteFeatures])
-        self.X_train_.to_excel(self.featureEngineering_Dir_+"Training Data.xlsx")
-        self.X_test_.to_excel(self.featureEngineering_Dir_+"Testing Data.xlsx")
+        
 
     def trimOutlier_using_Z_Score(self):
         import pandas as pd
-        import os
         import numpy as np
         for feature in self.EDA_.continousNumericalFeatures_:
             meanFeature=np.mean(self.EDA_.data_[feature])
@@ -435,8 +304,7 @@ class FeatureEngineering:
                 else:
                     pass
 
-        self.processedData_.to_excel(self.featureEngineering_Dir_+"Missing Outlier Treated.xlsx")
-        self.processedData_.to_excel(self.FEwriter_, sheet_name='Missing Outlier Treated')
+        
     
     def run(self):
         self.EDA_.logger_.debug(" ***************************************************************")
@@ -461,16 +329,13 @@ class Classifier:
 
     def __init__(self,input):
         import pandas as pd
-        import os
         import numpy as np
-        pd.set_option('display.max_columns', None)
         self.input_=input
         self.bestModels_={}
         self.FE_=FeatureEngineering(input)
         self.FE_.run()
         self.util_=Utility()
-        self.parentDirectory_ = os.path.dirname(os.getcwd())
-        self.Model_Dir_= self.util_.makeDir(self.parentDirectory_,"Machine Learning Models")
+        
     
     def getHyperParameters(self):
          
@@ -685,6 +550,7 @@ class Classifier:
         return self.getResult('Tuned Extra Trees Classifier')      
         
     def compareModel(self):
+        import pickle
         self.report_=Report()
         self.getHyperParameters()
         self.FE_.EDA_.logger_.debug("Tuning Logistic Regression ")
@@ -738,12 +604,16 @@ class Classifier:
         self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
         print(self.report_.report_)
         self.input_.writeMongoData(self.report_.report_,"TunedModelComparisonReport")
+        self.FE_.EDA_.logger_.debug("Saving Final Models in Pickle")
+        pickle.dump(self.bestModels_,open('model.pkl','wb'))
         self.FE_.EDA_.logger_.debug("Ending Model Calibration ")
 
     def compareModel1(self):
         self.getHyperParameters()
-        self.algoCall_={"Tuning Naive Bayes Classifier ":self.tuneNaiveBayesClassifier(),
+        self.algoCall_={"Tuning Logistic Regression ":self.tuneLogisticRegression(),
+                        "Tuning Naive Bayes Classifier ":self.tuneNaiveBayesClassifier(),
                         "Tuning Random Forest Classifier":self.tuneRandomForestClassifier(),
+                        "Tuning  Extra Trees Classifier ":self.tuneExtraTreesClassifier(),
                         "Tuning AdaBoost Classifier":self.tuneAdaBoostClassifier(),
                         "Tuning Gradient Boosting Classifier":self.tuneGradientBoostingClassifier(),
                         "Tuning XGBClassifier":self.tuneXGBClassifier(),
@@ -752,7 +622,7 @@ class Classifier:
         for key in self.algoCall_:
             self.report_.insertResult(self.algoCall_[key])    
         self.report_.report_= self.report_.report_.sort_values(["Accuracy"], ascending =False)
-        self.FE_.EDA_.logger_.debug("Ending Program. Thanks for your visit ")
+        
     
     def getResult(self,algoName):
         from sklearn.metrics import roc_curve, auc, classification_report, confusion_matrix, precision_score, recall_score,  accuracy_score, precision_recall_curve
@@ -811,6 +681,12 @@ class Classifier:
             self.predictionReport_.insertPredictionResults([key,int(self.bestModels_[key].predict(self.newData_)),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][0],2)*100),int(np.round(self.bestModels_[key].predict_proba(self.newData_)[0][1],2)*100)])              
         print(self.predictionReport_.predictionReport_)
         self.FE_.EDA_.logger_.debug("Ending Model prediction. Good Bye")
+
+    
+
+                              
+            
+            
         
    
         

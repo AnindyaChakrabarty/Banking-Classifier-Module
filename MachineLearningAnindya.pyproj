@@ -22,13 +22,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classifier.py" />
-    <Compile Include="Main.py" />
+    <Compile Include="Calibration.py" />
     <Compile Include="Input.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Factory.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WebApp.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="index.html" />
+    <Content Include="style.css" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

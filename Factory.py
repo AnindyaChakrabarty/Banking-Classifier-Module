@@ -11,6 +11,7 @@ class App:
         self.Classifier_.compareModel()
     def predict(self,newData):
         self.Classifier_.predict(newData)
+    
     def saveResults(self):
         self.Classifier_.FE_.EDA_.logger_.debug("Saving Results in MongoDB")
         self.input_.writeMongoData(self.Classifier_.report_.report_,"ModelComparisonReport")

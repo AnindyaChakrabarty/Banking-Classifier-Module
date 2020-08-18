@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+    <meta charset="UTF-8">
+    <title>ML API</title>
+    <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+    <div class="login">
+        <h1>Banking Customer Prediction </h1>
+        <h2> Anindya Chakrabarty </h2>
+        
+        <!-- Main Input For Receiving Query to our ML -->
+        <form action="{{ url_for('predict')}}" method="post">
+            <input type="text" name="CreditScore" placeholder="Credit Score" required="required" />
+            <input type="text" name="Geography" placeholder="Geography" required="required" />
+            <input type="text" name="Gender" placeholder="Gender" required="required" />
+            <input type="text" name="Age" placeholder="Age" required="required" />
+            <input type="text" name="Tenure" placeholder="Tenure" required="required" />
+            <input type="text" name="Balance" placeholder="Balance" required="required" />
+            <input type="text" name="NumOfProducts" placeholder="Number Of Products" required="required" />
+            <input type="text" name="HasCrCard" placeholder="Has Credit Card ?" required="required" />
+            <input type="text" name="IsActiveMember" placeholder="Is Active Member ?" required="required" />
+            <input type="text" name="EstimatedSalary" placeholder="Estimated Salary" required="required" />
+
+            <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+        </form>
+
+        <br>
+        <br>
+        {{ prediction_text }}
+
+    </div>
+
+
+</body>
+</html>
