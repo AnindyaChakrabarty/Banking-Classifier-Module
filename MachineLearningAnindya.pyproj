@@ -34,7 +34,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="default.css" />
     <Content Include="fonts.css" />
     <Content Include="home.html" />
     <Content Include="mlclassifier.html" />

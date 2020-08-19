@@ -60,7 +60,7 @@ def predict():
     table.append(f'{finalPred[16]} : {finalPred[17]}')
       
     
-    return render_template('home.html', prediction_text=table)
+    return render_template('home.html', prediction_text=f'{finalPred[16]} : {finalPred[17]}')
 
 
 
