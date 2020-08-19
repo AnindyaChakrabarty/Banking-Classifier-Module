@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>e6e1c887-4eac-48ee-af41-889853b002d2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>MachineLearningAnindya.py</StartupFile>
+    <StartupFile>WebApp.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -34,8 +34,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="index.html" />
-    <Content Include="style.css" />
+    <Content Include="default.css" />
+    <Content Include="fonts.css" />
+    <Content Include="home.html" />
+    <Content Include="mlclassifier.html" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

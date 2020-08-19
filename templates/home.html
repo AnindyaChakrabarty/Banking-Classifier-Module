@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title></title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900|Quicksand:400,700|Questrial" rel="stylesheet" />
+	<link href="{{ url_for('static', filename='css/default.css') }}" rel="stylesheet" type="text/css" media="all" />
+
+	
+
+</head>
+<body>
+	<div id="header-wrapper">
+		<div id="header" class="container">
+			<div id="logo">
+				<span class="icon icon-cog"></span>
+				<h1><a href="#">Machine learning Application in Banking</a></h1>
+				<h2><a href="#">Anindya Chakrabarty</a></h2>
+			</div>
+			<div id="menu">
+				<ul>
+					<li class="active"><a href="#" accesskey="1" title="">Machine Learning</a></li>
+					<li><a href="#" accesskey="3" title="">Natural language Processing</a></li>
+					<li><a href="#" accesskey="4" title="">Deep Learning</a></li>
+					<li><a href="#" accesskey="5" title="">Reinceforcement Learning</a></li>
+				</ul>
+			</div>
+			
+		</div>                   
+	</div>
+	<div class="wrapper">
+
+		<div id="welcome" class="container">
+
+			<div class="title">
+				<h1 style="color:#2056ac;">The purpose of this application is to predict whether a customer is most likely to exit a bank based on the below features </h1>
+			</div>
+
+			<form action="{{ url_for('predict')}}" method="post">
+				<label for="CreditScore"> Credit Score </label><input type="text" name="CreditScore" placeholder="Credit Score" required="required" />
+				<label for="Geography"> Geography </label><input type="text" name="Geography" placeholder="Geography" required="required" />
+				<label for="Gender"> Gender </label><input type="text" name="Gender" placeholder="Gender" required="required" />
+				<label for="Age"> Age </label><input type="text" name="Age" placeholder="Age" required="required" />
+				<label for="Tenure"> Tenure </label><input type="text" name="Tenure" placeholder="Tenure" required="required" />
+				<label for="Balance"> Balance </label><input type="text" name="Balance" placeholder="Balance" required="required" />
+				<label for="NumOfProducts"> Number Of Products </label><input type="text" name="NumOfProducts" placeholder="Number Of Products" required="required" />
+				<label for="HasCrCard"> Has Credit Card ? </label><input type="text" name="HasCrCard" placeholder="Has Credit Card ?" required="required" />
+				<label for="IsActiveMember"> Is Active Member ? </label><input type="text" name="IsActiveMember" placeholder="Is Active Member ?" required="required" />
+				<label for="EstimatedSalary"> Estimated Salary </label><input type="text" name="EstimatedSalary" placeholder="Estimated Salary" required="required" />
+
+				<button type="submit" class="button">Predict</button>
+			</form>
+
+
+			<br>
+			<br>
+			<div id="header" class="container">
+				<div class="title">
+					<h1 style="color:orangered">{{ prediction_text }} </h1>
+				</div>
+
+
+			</div>
+
+		</div>
+	</div>
+
+</body>
+</html>
