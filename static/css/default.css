@@ -12,14 +12,14 @@
 		font-size: 12pt;
 		color: rgba(0,0,0,.6);
 	}
-
-
-
-h1, h2, h3 {
-	margin: 0;
-	padding: 0;
-	color: #404040;
-}
+	
+	
+	h1, h2, h3
+	{
+		margin: 0;
+		padding: 0;
+		color: #404040;
+	}
 	
 	p, ol, ul
 	{
@@ -37,7 +37,9 @@ h1, h2, h3 {
 		line-height: 180%;
 	}
 	
-	
+	strong
+	{
+	}
 	
 	a
 	{
@@ -154,6 +156,97 @@ h1, h2, h3 {
 				}
 
 
+/*********************************************************************************/
+/* Image Style                                                                   */
+/*********************************************************************************/
+
+	.image
+	{
+		display: inline-block;
+		border: 1px solid rgba(0,0,0,.1);
+	}
+	
+	.image img
+	{
+		display: block;
+		width: 100%;
+	}
+	
+	.image-full
+	{
+		display: block;
+		width: 100%;
+		margin: 0 0 3em 0;
+	}
+	
+	.image-left
+	{
+		float: left;
+		margin: 0 2em 2em 0;
+	}
+	
+	.image-centered
+	{
+		display: block;
+		margin: 0 0 2em 0;
+	}
+	
+	.image-centered img
+	{
+		margin: 0 auto;
+		width: auto;
+	}
+
+/*********************************************************************************/
+/* List Styles                                                                   */
+/*********************************************************************************/
+
+	ul.style1
+	{
+	}
+
+
+/*********************************************************************************/
+/* Social Icon Styles                                                            */
+/*********************************************************************************/
+
+	ul.contact
+	{
+		margin: 0;
+		padding: 2em 0em 0em 0em;
+		list-style: none;
+	}
+	
+	ul.contact li
+	{
+		display: inline-block;
+		padding: 0em 0.10em;
+		font-size: 1em;
+	}
+	
+	ul.contact li span
+	{
+		display: none;
+		margin: 0;
+		padding: 0;
+	}
+	
+	ul.contact li a
+	{
+		color: #FFF;
+	}
+	
+	ul.contact li a:before
+	{
+		display: inline-block;
+		background: #4C93B9;
+		width: 40px;
+		height: 40px;
+		line-height: 40px;
+		text-align: center;
+		color: rgba(255,255,255,1);
+	}
+	
 
 /*********************************************************************************/
 /* Button Style                                                                  */
@@ -206,7 +299,7 @@ h1, h2, h3 {
 	.title .byline
 	{
 		font-size: 1.1em;
-		color: #6F6F6F#;
+		color: #6F6F6F;
 	}
 
 /*********************************************************************************/
@@ -217,6 +310,8 @@ h1, h2, h3 {
 	{
 		overflow: hidden;
 		background: #2056ac;
+		width: 100%;
+		text-align: center;
 	}
 
 	#header
@@ -224,6 +319,102 @@ h1, h2, h3 {
 		text-align: center;
 	}
 
+/*********************************************************************************/
+/* Logo                                                                          */
+/*********************************************************************************/
+
+	#logo
+	{
+		padding: 0em 0em 0em 0em;
+		text-align: center;
+		width: 100%;
+		
+	}
+	
+	#logo h1
+	{
+		display: block;
+		margin-bottom: 0.20em;
+		padding: 0em ;
+		font-size: 3.5em;
+		text-align: center;
+	}
+	
+	#logo a
+	{
+		text-decoration: none;
+		color: #FFF;
+	}
+	
+	#logo span
+	{
+		text-transform: uppercase;
+		font-size: 2.90em;
+		color: rgba(255,255,255,1);
+		text-align: center;
+	}
+
+	#logo span a
+	{
+		color: rgba(255,255,255,0.8);
+	}
+	
+	
+
+/*********************************************************************************/
+/* Menu                                                                          */
+/*********************************************************************************/
+
+	#menu
+	{
+		height: 60px;
+	}
+	
+	#menu ul
+	{
+		display: inline-block;
+		padding: 0em 2em;
+		text-align: center;
+	}
+	
+	#menu li
+	{
+		display: inline-block;
+	}
+	
+	#menu li a, #menu li span
+	{
+		display: inline-block;
+		padding: 0em 1.5em;
+		text-decoration: none;
+		font-size: 0.90em;
+		font-weight: 600;
+		text-transform: uppercase;
+		line-height: 60px;
+		outline: 0;
+		color: #FFF;
+	}
+	
+	#menu li:hover a, #menu li.active a, #menu li.active span
+	{
+		background: #FFF;
+		border-radius: 7px 7px 0px 0px;
+		color: #2056ac;
+	}
+	
+	#menu .current_page_item a
+	{
+	}
+	
+
+/*********************************************************************************/
+/* Banner                                                                        */
+/*********************************************************************************/
+
+	#banner
+	{
+		padding-top: 5em;
+	}
 
 /*********************************************************************************/
 /* Wrapper                                                                       */
@@ -322,3 +513,251 @@ h1, h2, h3 {
 		width: 350px;
 	}
 
+/*********************************************************************************/
+/* Footer                                                                        */
+/*********************************************************************************/
+
+	#footer
+	{
+		overflow: hidden;
+		padding: 5em 0em;
+		background: #E3F0F7;
+		text-align: center;
+	}
+
+
+		
+	#footer .fbox1,
+	#footer .fbox2,
+	#footer .fbox3
+	{
+		float: left;
+		width: 320px;
+		padding: 0px 40px 0px 40px;
+	}
+	
+	#footer .icon
+	{
+		display: block;
+		margin-bottom: 1em;
+		font-size: 3em;
+	}
+
+	
+	#footer .title span
+	{
+		color: rgba(255,255,255,0.4);
+	}
+
+/*********************************************************************************/
+/* Copyright                                                                     */
+/*********************************************************************************/
+
+	#copyright
+	{
+		overflow: hidden;
+		padding: 5em 0em;
+		border-top: 20px solid rgba(255,255,255,0.08);
+		text-align: center;
+	}
+	
+	#copyright p
+	{
+		letter-spacing: 1px;
+		font-size: 0.90em;
+		color: rgba(255,255,255,0.6);
+	}
+	
+	#copyright a
+	{
+		text-decoration: none;
+		color: rgba(255,255,255,0.8);
+	}
+
+/*********************************************************************************/
+/* Newsletter                                                                    */
+/*********************************************************************************/
+
+	#newsletter
+	{
+		overflow: hidden;
+		padding: 8em 0em;
+		background: #EDEDED;
+		text-align: center;
+	}
+	
+	#newsletter .title h2
+	{
+		color: rgba(0,0,0,0.8);
+	}
+	
+	#newsletter .content
+	{
+		width: 600px;
+		margin: 0px auto;
+	}
+	
+/*********************************************************************************/
+/* Portfolio                                                                     */
+/*********************************************************************************/
+
+	#portfolio
+	{
+		overflow: hidden;
+		padding-top: 5em;
+		border-top: 1px solid rgba(0,0,0,0.2);
+	}
+	
+	#portfolio .box
+	{
+		text-align: center;
+		color: rgba(0,0,0,0.5);
+	}
+	
+	#portfolio h3
+	{
+		display: block;
+		padding-bottom: 1em;
+		font-size: 1em;
+		color: rgba(0,0,0,0.6);
+	}
+
+	#portfolio .title
+	{
+		text-align: center;
+	}
+
+	#portfolio .title h2
+	{
+		color: rgba(0,0,0,0.8);
+	}
+
+	.column1,
+	.column2,
+	.column3,
+	.column4
+	{
+		width: 282px;
+	}
+	
+	.column1,
+	.column2,
+	.column3
+	{
+		float: left;
+		margin-right: 24px;
+	}
+	
+	.column4
+	{
+		float: right;
+	}
+
+/*********************************************************************************/
+/* Three Columns                                                                 */
+/*********************************************************************************/
+
+	#three-column
+	{
+		overflow: hidden;
+		margin-top: 5em;
+		padding-top: 1em;
+		border-top: 1px solid rgba(0,0,0,0.2);
+		text-align: center;
+	}
+	
+	#three-column h2
+	{
+		margin: 1em 0em;
+		font-size: 1.5em;
+		font-weight: 700;
+	}
+	
+	#three-column .icon
+	{
+		position: relative;
+		display: block;
+		margin: 0px auto 0.80em auto;
+		background: none;
+		line-height: 150px;
+		font-size: 4em;
+		width: 150px;
+		height: 150px;
+		border-radius: 100px;
+		border: 6px solid #67128F;
+		text-align: center;
+		color: #FFF;
+		
+	}
+		
+	#three-column #tbox1,
+	#three-column #tbox2,
+	#three-column #tbox3
+	{
+		float: left;
+		width: 320px;
+		padding: 80px 40px 80px 40px;
+	}
+	
+	#three-column .title
+	{
+		text-align: center;
+	}
+	
+	#three-column .title h2
+	{
+		font-size: 1.60em;
+	}
+	
+	#three-column .title .byline
+	{
+		padding-top: 0.50em;
+		font-size: 0.90em;
+		color: #858585;
+	}
+
+	#three-column .arrow-down
+	{
+		border-top-color: #292929;
+	}
+	
+	
+	ul.tools
+	{
+		margin: 0;
+		padding: 0em 0em 0em 0em;
+		list-style: none;
+	}
+	
+	ul.tools li
+	{
+		display: inline-block;
+		padding: 0em .2em;
+		font-size: 4em;
+	}
+	
+	ul.tools li span
+	{
+		display: none;
+		margin: 0;
+		padding: 0;
+	}
+	
+	ul.tools li a
+	{
+		color: #FFF;
+	}
+	
+	ul.tools li a:before
+	{
+		display: inline-block;
+		background: #1ABC9C;
+		width: 120px;
+		height: 120px;
+		border-radius: 50%;
+		line-height: 120px;
+		text-align: center;
+		color: #FFFFFF;
+	}
+	
+	

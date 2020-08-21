@@ -10,7 +10,7 @@ webapp = Flask(__name__)
 @webapp.route('/')
 @webapp.route('/home')
 def home():
-    return render_template('/home.html')
+    return render_template('/ClassifyForm.html')
 
 
 @webapp.route('/predict',methods=['POST'])
@@ -49,18 +49,17 @@ def predict():
     finalPred.append("Final Verdict :")
     finalPred.append(mode(finalPred))
     table=[]
-    table.append(f'{finalPred[0]} : {finalPred[1]}')
-    table.append(f'{finalPred[2]} :{finalPred[3]}')
-    table.append(f' {finalPred[4]} :{finalPred[5]}')
-    table.append(f'{finalPred[6]}:{finalPred[7]}')
-    table.append(f'{finalPred[8]} :{finalPred[9]}')
-    table.append(f'{finalPred[10]} :{finalPred[11]}')
-    table.append(f'{finalPred[12]} :{finalPred[13]}')
-    table.append(f'{finalPred[14]} : {finalPred[15]}')
-    table.append(f'{finalPred[16]} : {finalPred[17]}')
-      
-    
-    return render_template('home.html', prediction_text=f'{finalPred[16]} : {finalPred[17]}')
+    table.append(f'Prediction using {finalPred[0]} is that {finalPred[1]}')
+    table.append(f'Prediction using {finalPred[2]} is that {finalPred[3]}')
+    table.append(f'Prediction using {finalPred[4]} is that {finalPred[5]}')
+    table.append(f'Prediction using {finalPred[6]} is that {finalPred[7]}')
+    table.append(f'Prediction using {finalPred[8]} is that {finalPred[9]}')
+    table.append(f'Prediction using {finalPred[10]} is that {finalPred[11]}')
+    table.append(f'Prediction using {finalPred[12]} is that {finalPred[13]}')
+    table.append(f'Prediction using {finalPred[14]} is that {finalPred[15]}')
+    table.append(f'Final Prediction from this Model is that {finalPred[17]}')
+        
+    return render_template('Output.html', prediction_text=table)
 
 
 

@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+
+<style>
+    input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        background-color:rgba(201, 217, 248, 0.11);
+        color: #fff;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type=submit] {
+        width: 100%;
+        background-color:lightyellow;
+        color: #fff;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type=text]:hover 
+	{
+        background-color: lightyellow;
+    }
+
+	
+</style>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title></title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900|Quicksand:400,700|Questrial" rel="stylesheet" />
+	<link href="{{ url_for('static', filename='css/default.css') }}" rel="stylesheet" type="text/css" media="all" />
+	
+
+</head>
+<body>
+	<div id="header-wrapper">
+		<div id="header" class="container">
+			<div id="logo">
+				<span class="icon icon-cog"></span>
+				<h1><a href="#">Machine learning Application in Banking</a></h1>
+				<h2><a href="#">Anindya Chakrabarty</a></h2>
+			</div>
+			<div id="menu">
+				<ul>
+					<li class="active"><a href="#" accesskey="1" title="">Machine Learning</a></li>
+					<li><a href="#" accesskey="3" title="">Natural language Processing</a></li>
+					<li><a href="#" accesskey="4" title="">Deep Learning</a></li>
+					<li><a href="#" accesskey="5" title="">Reinceforcement Learning</a></li>
+				</ul>
+			</div>
+			
+		</div>                   
+	</div>
+	<div class="wrapper">
+
+		<div id="welcome" class="container">
+
+			<div class="title">
+				<h1 style="color:#2056ac;">The purpose of this application is to predict whether a customer is most likely to exit a bank based on the below features </h1>
+			</div>
+
+
+			<form action="{{ url_for('predict')}}" method="post" class="form">
+				<P>
+					<label for="CreditScore" style="color:#2056ac"> Enter the Credit Score of Customer </label><input type="text" name="CreditScore" placeholder="Credit Score" required="required" />
+				<P>
+					<label for="Geography" style="color:#2056ac"> Enter the Country of Customer </label><input type="text" name="Geography" placeholder="Geography" required="required" />
+				<P>
+					<label for="Gender" style="color:#2056ac"> Enter the Gender of Customer </label><input type="text" name="Gender" placeholder="Gender" required="required" />
+				<P>
+					<label for="Age" style="color:#2056ac"> Enter the Age of Customer </label><input type="text" name="Age" placeholder="Age" required="required" />
+				<P>
+					<label for="Tenure" style="color:#2056ac"> Enter the Loan Tenure </label><input type="text" name="Tenure" placeholder="Tenure" required="required" />
+				<P>
+					<label for="Balance" style="color:#2056ac"> Enter the Balance </label><input type="text" name="Balance" placeholder="Balance" required="required" />
+				<P>
+					<label for="NumOfProducts" style="color:#2056ac"> Enter the Number Of Products the Customer is holding </label><input type="text" name="NumOfProducts" placeholder="Number Of Products" required="required" />
+				<P>
+					<label for="HasCrCard" style="color:#2056ac"> Does the Customer has Credit Card ? </label><input type="text" name="HasCrCard" placeholder="Has Credit Card ?" required="required" />
+				<P>
+					<label for="IsActiveMember" style="color:#2056ac"> Is the Customer an Active Member of the Bank? </label><input type="text" name="IsActiveMember" placeholder="Is Active Member ?" required="required" />
+				<P>
+					<label for="EstimatedSalary" style="color:#2056ac"> Enter the Estimated Salary of the Customer </label><input type="text" name="EstimatedSalary" placeholder="Estimated Salary" required="required" />
+				<P>
+
+					<button type="submit" class="button">Predict</button>
+			</form>
+
+						
+			</div>
+
+			
+
+
+
+		</div>
+	
+
+</body>
+</html>
